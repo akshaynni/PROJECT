@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated LaTeX Code</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="number"], input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+        button {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generated LaTeX Code</h1>
+        <pre>{{ latex_code }}</pre>
+
+        <form id="pdfForm" action="/generate_pdf" method="POST">
+            <button type="submit">Generate PDF</button>
+        </form>
+
+        <form id="videoForm" action="/generate_video" method="POST">
+            <button type="submit">Generate Video</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle the video and PDF form submissions without progress bar
+        document.getElementById('videoForm').onsubmit = function(event) {
+            event.preventDefault();
+            fetch('/generate_video', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => window.location.href = data.redirect_url)
+                .catch(error => console.error('Error:', error));
+        };
+
+        document.getElementById('pdfForm').onsubmit = function(event) {
+            event.preventDefault();
+            fetch('/generate_pdf', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => window.location.href = data.redirect_url)
+                .catch(error => console.error('Error:', error));
+        };
+    </script>
+</body>
+</html>

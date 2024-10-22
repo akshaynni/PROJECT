@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Presentation</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #007BFF;
+            padding: 10px 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed; /* Keep the header fixed at the top */
+            top: 0;
+            left: 0;
+            z-index: 1000; /* Ensure it stays above other content */
+            box-sizing: border-box;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .header nav {
+            display: flex;
+            gap: 15px;
+        }
+        .header a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .header a:hover {
+            color: #ddd;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            margin: 80px auto 20px; /* Add top margin to avoid overlap with fixed header */
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Academic Presentation Generator</h1>
+        {% if not logged_in %}
+        <nav>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </nav>
+        {% elif logged_in %}
+        <nav>
+            <a href="/logout">Logout</a>
+        </nav>
+        {% endif %}
+    </header>
+    <div class="container">
+        <h2>Generate Your Presentation</h2>
+        <form action="/generate" method="post" onsubmit="return validateSlides();">
+            <label for="details">Enter Your Details (NAME, COLLEGE, ROLL NO., etc.):</label>
+            <input type="text" id="details" name="details" required>
+
+            <label for="subject">Enter Subject:</label>
+            <input type="text" id="subject" name="subject" required>
+
+            <label for="slides">Number of Slides:</label>
+            <input
+                type="number"
+                id="slides"
+                name="slides"
+                min="1"
+                {% if not logged_in %}
+                max="10"
+                placeholder="Max 10 slides for guests"
+                {% endif %}
+                required
+            >
+
+            <input type="submit" value="Generate">
+        </form>
+    </div>
+
+    <script>
+        function validateSlides() {
+            const slidesInput = document.getElementById('slides');
+            const slidesValue = parseInt(slidesInput.value);
+
+            // Ensure the value is a positive number
+            if (isNaN(slidesValue) || slidesValue < 1) {
+                alert("Please enter a valid positive number for the slides.");
+                slidesInput.focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const loggedIn = {{ logged_in | tojson }};
+            const slidesInput = document.getElementById('slides');
+
+            if (!loggedIn) {
+                slidesInput.max = 10;
+            }
+        });
+    </script>
+</body>
+
+</html>
